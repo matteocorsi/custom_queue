@@ -12,7 +12,7 @@ import diario.alimentare.coda.queue.ServerSideAdapter;
 
 public class DataObjectServerSideAdapter implements
 		ServerSideAdapter<DataObject> {
-	final static String URL_SERVER = "SERVER PATH";
+	final static String URL_SERVER = "SERVER_PATH";
 
 	private class Result {
 		boolean send_flag = false;
