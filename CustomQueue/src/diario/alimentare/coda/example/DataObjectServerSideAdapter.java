@@ -50,7 +50,7 @@ public class DataObjectServerSideAdapter implements
 				System.out.println("FALIURE");
 			}
 		});
-		System.out.println("FLAG  " + ris.send_flag);
+		System.out.println("FLAG  ---" + ris.send_flag);
 		return ris.send_flag;
 	}
 
