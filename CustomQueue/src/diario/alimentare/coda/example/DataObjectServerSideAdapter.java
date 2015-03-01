@@ -12,7 +12,7 @@ import diario.alimentare.coda.queue.ServerSideAdapter;
 
 public class DataObjectServerSideAdapter implements
 		ServerSideAdapter<DataObject> {
-	final static String URL_SERVER = "SERVER_PATH";
+	final static String URL_SERVER = "url server ";
 
 	private class Result {
 		boolean send_flag = false;
@@ -25,7 +25,7 @@ public class DataObjectServerSideAdapter implements
 		String objson = gson.toJson(obj);
 
 		final Result ris = new Result();
-		;
+		
 		System.out.println("SPEDISCO L'OGGETTO ");
 		SyncHttpClient c = new SyncHttpClient();
 		RequestParams params = new RequestParams();
@@ -48,6 +48,7 @@ public class DataObjectServerSideAdapter implements
 					Throwable arg3) {
 				// TODO Auto-generated method stub
 				System.out.println("FALIURE");
+				arg3.printStackTrace();
 			}
 		});
 		System.out.println("FLAG  ---" + ris.send_flag);

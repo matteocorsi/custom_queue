@@ -2,6 +2,7 @@ package diario.alimentare.coda;
 
 import android.app.*;
 import android.os.*;
+import android.util.Log;
 import android.view.*;
 import android.view.View.*;
 import android.widget.*;
@@ -10,7 +11,7 @@ import diario.alimentare.coda.queue.*;
 
 import java.util.*;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Runnable {
     Button send;
     Button refresh;
     ListView list;
@@ -20,6 +21,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         send = (Button) findViewById(R.id.button_send);
@@ -31,8 +33,10 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+            	Log.d(getClass().getName(), "BOTTONE SUMBIT START ");
                 coda.submit(new DataObject("comando #" + (count++)));
-                refresh.performClick();
+                Log.d(getClass().getName(), "BOTTONE SUMBIT END");
+                
             }
         });
 
@@ -50,8 +54,47 @@ public class MainActivity extends Activity {
         });
         
         refresh.performClick();
-
+        new Thread(this).start();
     }
+    
+    private void refreshOnUIThread(){
+    	runOnUiThread(new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				refresh.performClick();
+			}
+    		
+    		
+    	});
+    }
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		coda.stop();
+		coda=null;
+		stopRefresh=true;
+	}
+	
+	private volatile boolean stopRefresh=false; 
+	
+	@Override
+	public void run() {
+		while (!stopRefresh){
+			try {
+				Thread.sleep(1000);
+				if (stopRefresh)return;
+				refreshOnUIThread();
+			} catch (InterruptedException e) {
+			}
+			
+		}
+		
+	}
+    
+    
 
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {

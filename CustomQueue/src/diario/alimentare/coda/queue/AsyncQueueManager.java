@@ -7,6 +7,8 @@ import android.util.*;
 import java.io.*;
 import java.util.*;
 
+import diario.alimentare.coda.queue.QueueDatabaseHelper.QueueDatabaseHelperObject;
+
 public class AsyncQueueManager<T> {
     private final Context ctx;
     private final ServerSideAdapter<T> serverSideAdapter;
@@ -94,7 +96,7 @@ public class AsyncQueueManager<T> {
 
             while (!endThread) {
                 try {
-                    synchronized (blocco) {
+                     {
 
                         if (!isNetworkActive(cm)) {
                             Log.d(getClass().getName(), "NETWORK NON ATTIVO");
@@ -106,14 +108,14 @@ public class AsyncQueueManager<T> {
                         }
                     }
 
-                    long id = helper.getNextId();
-                    if (id > 0) {
-                        Log.d(getClass().getName(), "PROCESSAMENTO OGGETTO #" + id);
-                        T obj = (T) helper.getObject(id);
+                    QueueDatabaseHelperObject<T> objxx= helper.getNextObject();
+                    if (objxx !=null) {
+                        Log.d(getClass().getName(), "PROCESSAMENTO OGGETTO #" + objxx.rowid);
+                        T obj = objxx.object;
                         if (serverSideAdapter.send(obj)){
-                        	helper.removeObject(id);
+                        	helper.removeObject(objxx.rowid);
                         }else{
-                        	Log.d(getClass().getName(), "FAILURE OGGETTO #" + id);
+                        	Log.d(getClass().getName(), "FAILURE OGGETTO #" + objxx.rowid+" - Server adpter false!");
                         }
                     } else {
                         //oggetti finiti
